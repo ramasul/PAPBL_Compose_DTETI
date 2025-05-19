@@ -1,3 +1,16 @@
+import java.util.Properties
+import java.io.FileInputStream
+
+// Load secret.properties
+val secretProps = Properties()
+val secretPropsFile = rootProject.file("secret.properties")
+
+if (secretPropsFile.exists()) {
+    secretProps.load(FileInputStream(secretPropsFile))
+}
+
+val mapsApiKey = secretProps.getProperty("MAP_TILER_API") ?: ""
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -18,6 +31,7 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        buildConfigField("String", "MAP_TILER_API", "\"$mapsApiKey\"")
     }
 
     buildTypes {
@@ -37,6 +51,7 @@ android {
         jvmTarget = "1.8"
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
     composeOptions {
@@ -50,6 +65,7 @@ android {
 }
 
 dependencies {
+    implementation("org.maplibre.gl:android-sdk:11.8.0")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
